@@ -20,7 +20,7 @@ RUN apt-get update \
         libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install Python dependenciesq
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 

@@ -59,6 +59,33 @@ async def send_otp_email(email: str) -> bool:
         print(f"Error sending OTP email: {e}")
         return False
 
+async def send_password_reset_email(email: str, reset_link: str) -> bool:
+    try:
+        html_content = f"""
+        <html>
+            <body>
+                <h2>Password Reset Request</h2>
+                <p>You have requested to reset your password. Click the link below to reset your password:</p>
+                <p><a href="{reset_link}">Reset Password</a></p>
+                <p>This link will expire in 1 hour.</p>
+                <p>If you didn't request this, please ignore this email.</p>
+            </body>
+        </html>
+        """
+        
+        message = MessageSchema(
+            subject="Password Reset - Todo Habit Tracker",
+            recipients=[email],
+            body=html_content,
+            subtype="html"
+        )
+        
+        await fastmail.send_message(message)
+        return True
+    except Exception as e:
+        print(f"Error sending password reset email: {e}")
+        return False
+
 def verify_otp(email: str, otp_code: str) -> bool:
     stored_otp = redis_client.get(f"otp:{email}")
     if stored_otp and stored_otp.decode() == otp_code:

@@ -4,6 +4,7 @@ from alembic import context
 from app.config import get_settings
 from app.database import Base
 from app.models import user, todo, habit  # Import all models
+from app.models import pomodoro
 
 settings = get_settings()
 config = context.config

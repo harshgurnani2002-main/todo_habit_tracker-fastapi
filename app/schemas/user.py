@@ -22,7 +22,9 @@ class User(UserBase):
     id:int
     is_active:bool
     is_verified:bool
+    is_admin:bool
     profile_picture:Optional[str]=None
+    last_otp_verified:Optional[datetime]=None
     created_at:datetime
 
     class Config:

@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     redis_url:str
 
     app_name:str='Todo Habbit Tracker'
+    app_url:str='http://localhost:3000'  # Frontend URL
     debug:bool=False
 
     class Config:

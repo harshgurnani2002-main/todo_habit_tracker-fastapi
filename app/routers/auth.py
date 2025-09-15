@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from datetime import datetime, timedelta
+import secrets
+import redis
 from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, User as UserSchema, Token, LoginRequest, OTPRequest, OTPVerify
+from app.schemas.forgot_password import ForgotPasswordRequest, ResetPasswordRequest
 from app.utils.security import (
     verify_password, get_password_hash, create_access_token, 
     generate_otp_secret, generate_qr_code, verify_otp_code
@@ -16,6 +19,9 @@ from app.config import get_settings
 
 settings = get_settings()
 router = APIRouter(prefix="/auth", tags=["authentication"])
+
+# Redis client for password reset tokens
+redis_client = redis.from_url(settings.redis_url)
 
 # Traditional email/password registration
 @router.post("/register", response_model=UserSchema)
@@ -43,6 +49,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
     
     return db_user
 
+from datetime import datetime, timedelta
 # Login with email/password
 @router.post("/login", response_model=Token)
 async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
@@ -55,16 +62,24 @@ async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
     
     # Check if 2FA is enabled
     if user.is_2fa_enabled:
-        if not login_data.otp_code:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="OTP code required"
-            )
-        if not verify_otp_code(user.otp_secret, login_data.otp_code):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid OTP code"
-            )
+        # Check if user was recently verified (within 24 hours)
+        if user.last_otp_verified and datetime.now() - user.last_otp_verified < timedelta(hours=24):
+            # Skip OTP verification
+            pass
+        else:
+            if not login_data.otp_code:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="OTP code required"
+                )
+            if not verify_otp_code(user.otp_secret, login_data.otp_code):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid OTP code"
+                )
+            # Update last OTP verified time
+            user.last_otp_verified = datetime.now()
+            db.commit()
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
@@ -154,6 +169,10 @@ async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(user)
     
+    # Update last OTP verified time
+    user.last_otp_verified = datetime.now()
+    db.commit()
+    
     # Create access token
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
     access_token = create_access_token(
@@ -204,11 +223,83 @@ async def verify_2fa_setup(
             detail="Invalid OTP code"
         )
     
-    # Enable 2FA
+    # Enable 2FA and update last OTP verified time
     current_user.is_2fa_enabled = True
+    current_user.last_otp_verified = datetime.now()
     db.commit()
     
     return {"message": "2FA enabled successfully"}
+
+# Forgot password - send reset token
+@router.post("/forgot-password")
+async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    # Check if user exists
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        # We don't reveal if the email exists for security reasons
+        return {"message": "If the email exists, a reset link has been sent"}
+    
+    # Generate reset token
+    reset_token = secrets.token_urlsafe(32)
+    token_key = f"password_reset:{reset_token}"
+    
+    # Store token in Redis with 1-hour expiration
+    redis_client.setex(token_key, 3600, request.email)
+    
+    # Send reset email
+    reset_link = f"{settings.app_url}/reset-password?token={reset_token}"
+    
+    # Send email
+    from app.utils.email import send_password_reset_email
+    success = await send_password_reset_email(request.email, reset_link)
+    
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send reset email"
+        )
+    
+    return {"message": "If the email exists, a reset link has been sent"}
+
+# Reset password with token
+@router.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    token_key = f"password_reset:{request.token}"
+    
+    # Check if token exists
+    email = redis_client.get(token_key)
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token"
+        )
+    
+    email = email.decode()
+    
+    # Get user
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Check if user is a Google user (no password)
+    if user.google_id and not user.hashed_password:
+        # For Google users, we still allow password reset to enable email/password login
+        pass
+    
+    # Hash new password
+    hashed_password = get_password_hash(request.new_password)
+    user.hashed_password = hashed_password
+    
+    # Save changes
+    db.commit()
+    
+    # Delete token
+    redis_client.delete(token_key)
+    
+    return {"message": "Password reset successfully"}
 
 # Get current user info
 @router.get("/me", response_model=UserSchema)

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine,Base
-from app.routers import auth,habits,todos
+from app.routers import auth_router, todos_router, habits_router, dashboard_router, admin_router, pomodoro_router
 from app.config import get_settings
 
 settings=get_settings()
@@ -24,9 +24,12 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(auth.router)
-app.include_router(habits.router)
-app.include_router(todos.router)
+app.include_router(auth_router)
+app.include_router(habits_router)
+app.include_router(todos_router)
+app.include_router(dashboard_router)
+app.include_router(admin_router)
+app.include_router(pomodoro_router)
 
 
 @app.get("/")
