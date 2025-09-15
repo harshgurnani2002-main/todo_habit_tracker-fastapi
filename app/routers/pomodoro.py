@@ -68,7 +68,7 @@ async def get_pomodoro_analytics(
         completion_rate=round(completion_rate, 2),
         average_duration=round(average_duration, 2),
         total_time=total_time
-    )c
+    )
 
 @router.get("/", response_model=List[Pomodoro])
 async def get_pomodoro_sessions(

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import secrets
 import redis
 from app.database import get_db
@@ -62,24 +62,19 @@ async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
     
     # Check if 2FA is enabled
     if user.is_2fa_enabled:
-        # Check if user was recently verified (within 24 hours)
-        if user.last_otp_verified and datetime.now() - user.last_otp_verified < timedelta(hours=24):
-            # Skip OTP verification
-            pass
-        else:
-            if not login_data.otp_code:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="OTP code required"
-                )
-            if not verify_otp_code(user.otp_secret, login_data.otp_code):
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid OTP code"
-                )
-            # Update last OTP verified time
-            user.last_otp_verified = datetime.now()
-            db.commit()
+        if not login_data.otp_code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="OTP code required"
+            )
+        if not verify_otp_code(user.otp_secret, login_data.otp_code):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid OTP code"
+            )
+        # # Update last OTP verified time
+        # user.last_otp_verified = datetime.now(datetime.astimezone(timezone.utc))
+        # db.commit()
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
@@ -170,7 +165,7 @@ async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
         db.refresh(user)
     
     # Update last OTP verified time
-    user.last_otp_verified = datetime.now()
+    user.last_otp_verified = datetime.now(datetime.timezone.utc)
     db.commit()
     
     # Create access token
@@ -225,7 +220,7 @@ async def verify_2fa_setup(
     
     # Enable 2FA and update last OTP verified time
     current_user.is_2fa_enabled = True
-    current_user.last_otp_verified = datetime.now()
+    current_user.last_otp_verified = datetime.now(datetime.timezone.utc)
     db.commit()
     
     return {"message": "2FA enabled successfully"}

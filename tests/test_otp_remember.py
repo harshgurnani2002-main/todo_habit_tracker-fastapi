@@ -28,7 +28,7 @@ def db():
     finally:
         db.close()
 
-def test_otp_not_required_within_24_hours(client, db):
+def test_otp_always_required_when_2fa_enabled(client, db):
     # Create a user with 2FA enabled and recently verified
     hashed_password = get_password_hash("testpassword")
     user = User(
@@ -42,15 +42,15 @@ def test_otp_not_required_within_24_hours(client, db):
     db.add(user)
     db.commit()
     
-    # Try to login without OTP - should succeed
+    # Try to login without OTP - should fail even though recently verified
     response = client.post("/auth/login", json={
         "email": "test@example.com",
         "password": "testpassword"
     })
     
-    # Should succeed without OTP
-    assert response.status_code == 200
-    assert "access_token" in response.json()
+    # Should fail without OTP even when recently verified
+    assert response.status_code == 400
+    assert response.json()["detail"] == "OTP code required"
 
 def test_otp_required_after_24_hours(client, db):
     # Create a user with 2FA enabled but verified more than 24 hours ago
