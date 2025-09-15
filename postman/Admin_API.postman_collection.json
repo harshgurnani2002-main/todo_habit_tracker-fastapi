@@ -1,0 +1,862 @@
+{
+	"info": {
+		"_postman_id": "admin-api-collection",
+		"name": "Todo Habit Tracker - Admin API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Admin APIs for Todo Habit Tracker with filter examples"
+	},
+	"item": [
+		{
+			"name": "Get Admin Dashboard",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/dashboard",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users - Filter by Active Status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users?is_active=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					],
+					"query": [
+						{
+							"key": "is_active",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users - Filter by Admin Status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users?is_admin=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					],
+					"query": [
+						{
+							"key": "is_admin",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users - Filter by Verified Status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users?is_verified=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					],
+					"query": [
+						{
+							"key": "is_verified",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users - Search in Email, Name or Username",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users?search=john",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "john"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users - Sort by Created At Ascending",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users?sort_by=created_at&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users - Combined Filters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users?is_active=true&is_admin=false&search=john&sort_by=created_at&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users"
+					],
+					"query": [
+						{
+							"key": "is_active",
+							"value": "true"
+						},
+						{
+							"key": "is_admin",
+							"value": "false"
+						},
+						{
+							"key": "search",
+							"value": "john"
+						},
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"is_active\": true,\n  \"is_admin\": false,\n  \"is_verified\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/admin/users/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/users/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Todos (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Completed Status (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?is_completed=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "is_completed",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Priority (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?priority=high",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "priority",
+							"value": "high"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Category (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?category=Work",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "Work"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by User ID (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?user_id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Search in Title or Description (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?search=meeting",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "meeting"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Sort by Created At Descending (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?sort_by=created_at&sort_order=desc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Combined Filters (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/todos?is_completed=false&priority=high&category=Work&user_id=1&search=meeting&sort_by=created_at&sort_order=desc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"todos"
+					],
+					"query": [
+						{
+							"key": "is_completed",
+							"value": "false"
+						},
+						{
+							"key": "priority",
+							"value": "high"
+						},
+						{
+							"key": "category",
+							"value": "Work"
+						},
+						{
+							"key": "user_id",
+							"value": "1"
+						},
+						{
+							"key": "search",
+							"value": "meeting"
+						},
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Habits (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Filter by Active Status (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits?is_active=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					],
+					"query": [
+						{
+							"key": "is_active",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Filter by Frequency (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits?frequency=daily",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					],
+					"query": [
+						{
+							"key": "frequency",
+							"value": "daily"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Filter by User ID (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits?user_id=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Search in Name or Description (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits?search=exercise",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "exercise"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Sort by Created At Descending (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits?sort_by=created_at&sort_order=desc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Combined Filters (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/admin/habits?is_active=true&frequency=daily&user_id=1&search=exercise&sort_by=created_at&sort_order=desc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"admin",
+						"habits"
+					],
+					"query": [
+						{
+							"key": "is_active",
+							"value": "true"
+						},
+						{
+							"key": "frequency",
+							"value": "daily"
+						},
+						{
+							"key": "user_id",
+							"value": "1"
+						},
+						{
+							"key": "search",
+							"value": "exercise"
+						},
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}

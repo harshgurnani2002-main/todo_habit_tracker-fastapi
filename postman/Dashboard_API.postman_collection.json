@@ -1,0 +1,200 @@
+{
+	"info": {
+		"_postman_id": "dashboard-api-collection",
+		"name": "Todo Habit Tracker - Dashboard API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Dashboard APIs for Todo Habit Tracker with filter examples"
+	},
+	"item": [
+		{
+			"name": "Get Dashboard Stats",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/dashboard/stats",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard",
+						"stats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dashboard Stats - Filter by Date Range",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/dashboard/stats?start_date=2023-11-01&end_date=2023-11-30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2023-11-01"
+						},
+						{
+							"key": "end_date",
+							"value": "2023-11-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dashboard Stats - Filter by Category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/dashboard/stats?category=Work",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "Work"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dashboard Stats - Filter by Priority",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/dashboard/stats?priority=high",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "priority",
+							"value": "high"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dashboard Stats - Combined Filters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/dashboard/stats?start_date=2023-11-01&end_date=2023-11-30&category=Work&priority=high",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"dashboard",
+						"stats"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2023-11-01"
+						},
+						{
+							"key": "end_date",
+							"value": "2023-11-30"
+						},
+						{
+							"key": "category",
+							"value": "Work"
+						},
+						{
+							"key": "priority",
+							"value": "high"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}

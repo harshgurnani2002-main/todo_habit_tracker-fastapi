@@ -1,0 +1,450 @@
+{
+	"info": {
+		"_postman_id": "todo-api-collection",
+		"name": "Todo Habit Tracker - Todo API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Todo APIs for Todo Habit Tracker with filter examples"
+	},
+	"item": [
+		{
+			"name": "Create Todo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Buy groceries\",\n  \"description\": \"Milk, eggs, bread, fruits\",\n  \"priority\": \"high\",\n  \"category\": \"Shopping\",\n  \"due_date\": \"2023-12-31T10:00:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/todos/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Todos",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Completed Status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?completed=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "completed",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Priority",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?priority=high",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "priority",
+							"value": "high"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?category=Work",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "Work"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Search in Title or Description",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?search=meeting",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "meeting"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Due Date Range",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?due_date_from=2023-12-01&due_date_to=2023-12-31",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "due_date_from",
+							"value": "2023-12-01"
+						},
+						{
+							"key": "due_date_to",
+							"value": "2023-12-31"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Filter by Created Date Range",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?created_from=2023-11-01&created_to=2023-11-30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "created_from",
+							"value": "2023-11-01"
+						},
+						{
+							"key": "created_to",
+							"value": "2023-11-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Sort by Due Date Ascending",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?sort_by=due_date&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "due_date"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todos - Combined Filters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/?completed=false&priority=high&category=Work&search=meeting&sort_by=due_date&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						""
+					],
+					"query": [
+						{
+							"key": "completed",
+							"value": "false"
+						},
+						{
+							"key": "priority",
+							"value": "high"
+						},
+						{
+							"key": "category",
+							"value": "Work"
+						},
+						{
+							"key": "search",
+							"value": "meeting"
+						},
+						{
+							"key": "sort_by",
+							"value": "due_date"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Todo by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Todo",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Buy groceries and vegetables\",\n  \"description\": \"Milk, eggs, bread, fruits, vegetables\",\n  \"priority\": \"high\",\n  \"category\": \"Shopping\",\n  \"due_date\": \"2023-12-31T15:00:00\",\n  \"is_completed\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/todos/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Todo",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/todos/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"todos",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}

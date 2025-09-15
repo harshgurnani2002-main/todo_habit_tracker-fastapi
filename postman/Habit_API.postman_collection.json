@@ -1,0 +1,573 @@
+{
+	"info": {
+		"_postman_id": "habit-api-collection",
+		"name": "Todo Habit Tracker - Habit API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Habit APIs for Todo Habit Tracker with filter examples"
+	},
+	"item": [
+		{
+			"name": "Create Habit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Morning Exercise\",\n  \"description\": \"30 minutes of morning exercise\",\n  \"frequency\": \"daily\",\n  \"target_count\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/habits/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Habits",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Filter by Active Only",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/?active_only=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					],
+					"query": [
+						{
+							"key": "active_only",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Filter by Frequency",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/?frequency=daily",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					],
+					"query": [
+						{
+							"key": "frequency",
+							"value": "daily"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Search in Name or Description",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/?search=exercise",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "exercise"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Filter by Created Date Range",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/?created_from=2023-11-01&created_to=2023-11-30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					],
+					"query": [
+						{
+							"key": "created_from",
+							"value": "2023-11-01"
+						},
+						{
+							"key": "created_to",
+							"value": "2023-11-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Sort by Name Ascending",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/?sort_by=name&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "name"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habits - Combined Filters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/?active_only=true&frequency=daily&search=exercise&sort_by=name&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						""
+					],
+					"query": [
+						{
+							"key": "active_only",
+							"value": "true"
+						},
+						{
+							"key": "frequency",
+							"value": "daily"
+						},
+						{
+							"key": "search",
+							"value": "exercise"
+						},
+						{
+							"key": "sort_by",
+							"value": "name"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habit by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Habit",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Morning Exercise and Meditation\",\n  \"description\": \"30 minutes of morning exercise and 10 minutes of meditation\",\n  \"frequency\": \"daily\",\n  \"target_count\": 1,\n  \"is_active\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/habits/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Habit",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habit Analytics",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/1/analytics?days=30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1",
+						"analytics"
+					],
+					"query": [
+						{
+							"key": "days",
+							"value": "30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Habit Entry",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"completed_count\": 1,\n  \"notes\": \"Completed morning exercise successfully\",\n  \"date\": \"2023-11-15T08:00:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/habits/1/entries",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habit Entries",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/1/entries",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1",
+						"entries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habit Entries - Filter by Date Range",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/1/entries?date_from=2023-11-01&date_to=2023-11-30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1",
+						"entries"
+					],
+					"query": [
+						{
+							"key": "date_from",
+							"value": "2023-11-01"
+						},
+						{
+							"key": "date_to",
+							"value": "2023-11-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Habit Entries - Sort by Date Ascending",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/1/entries?sort_by=date&sort_order=asc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"1",
+						"entries"
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "date"
+						},
+						{
+							"key": "sort_order",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Aggregate Habit Analytics",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/habits/analytics/aggregate?days=30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"habits",
+						"analytics",
+						"aggregate"
+					],
+					"query": [
+						{
+							"key": "days",
+							"value": "30"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}

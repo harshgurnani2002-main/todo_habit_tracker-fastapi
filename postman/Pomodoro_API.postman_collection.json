@@ -1,0 +1,378 @@
+{
+	"info": {
+		"_postman_id": "pomodoro-api-collection",
+		"name": "Todo Habit Tracker - Pomodoro API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Pomodoro APIs for Todo Habit Tracker with filter examples"
+	},
+	"item": [
+		{
+			"name": "Create Pomodoro Session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Work on project proposal\",\n  \"description\": \"Write the project proposal for client\",\n  \"duration\": 25,\n  \"break_duration\": 5\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pomodoro/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Analytics",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/analytics?days=30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						"analytics"
+					],
+					"query": [
+						{
+							"key": "days",
+							"value": "30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Pomodoro Sessions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Sessions - Filter by Active Only",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/?active_only=true",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					],
+					"query": [
+						{
+							"key": "active_only",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Sessions - Search in Title or Description",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/?search=project",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "project"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Sessions - Filter by Created Date Range",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/?created_from=2023-11-01&created_to=2023-11-30",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					],
+					"query": [
+						{
+							"key": "created_from",
+							"value": "2023-11-01"
+						},
+						{
+							"key": "created_to",
+							"value": "2023-11-30"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Sessions - Sort by Created At Descending",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/?sort_by=created_at&sort_order=desc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					],
+					"query": [
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Sessions - Combined Filters",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/?active_only=true&search=project&sort_by=created_at&sort_order=desc",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						""
+					],
+					"query": [
+						{
+							"key": "active_only",
+							"value": "true"
+						},
+						{
+							"key": "search",
+							"value": "project"
+						},
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "sort_order",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pomodoro Session by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Pomodoro Session",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Work on project proposal and presentation\",\n  \"description\": \"Write the project proposal and prepare presentation for client\",\n  \"duration\": 25,\n  \"break_duration\": 5,\n  \"is_active\": true,\n  \"completed_at\": \"2023-11-15T10:30:00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/pomodoro/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Pomodoro Session",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/pomodoro/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"pomodoro",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
+}
