@@ -30,12 +30,17 @@ class ProductivityStats(BaseModel):
     todos_completed: int
     habits_completed: int
 
+class HabitHeatmapData(BaseModel):
+    date: date
+    completed_count: int
+
 class DashboardStats(BaseModel):
     todo_stats: TodoStats
     habit_stats: HabitStats
     productivity_trend: List[ProductivityStats]
     category_distribution: Dict[str, int]
     priority_distribution: Dict[str, int]
+    habit_heatmap: List[HabitHeatmapData]
 
 class DashboardFilters(BaseModel):
     start_date: Optional[date] = None
@@ -135,6 +140,22 @@ async def get_dashboard_stats(
             habits_completed=habits_completed
         ))
     
+    # Habit heatmap data (last 30 days)
+    heatmap_start_date = end_date - timedelta(days=29)
+    habit_heatmap_data = db.query(
+        HabitEntry.date,
+        HabitEntry.completed_count
+    ).join(Habit).filter(
+        Habit.owner_id == current_user.id,
+        func.date(HabitEntry.date) >= heatmap_start_date,
+        func.date(HabitEntry.date) <= end_date
+    ).all()
+
+    habit_heatmap = [
+        HabitHeatmapData(date=row.date, completed_count=row.completed_count)
+        for row in habit_heatmap_data
+    ]
+
     # Category distribution
     category_distribution = {}
     category_results = db.query(Todo.category, func.count(Todo.id)).filter(
@@ -159,5 +180,6 @@ async def get_dashboard_stats(
         habit_stats=habit_stats,
         productivity_trend=productivity_trend,
         category_distribution=category_distribution,
-        priority_distribution=priority_distribution
+        priority_distribution=priority_distribution,
+        habit_heatmap=habit_heatmap
     )

@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import '../components/Calendar.css';
+import '../components/CalendarOverride.css';
 
 const HabitDetail = () => {
   const location = useLocation();
@@ -70,15 +71,20 @@ const HabitDetail = () => {
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Completion Calendar</h3>
-        <div className="p-4 rounded-lg">
+        <div className="w-full">
           <Calendar
-            className="react-calendar-minimal"
+            className="react-calendar-modern w-full text-black dark:text-white"
             tileClassName={({ date, view }) => {
               if (view === 'month' && completedDates.find((d: Date) => d.toDateString() === date.toDateString())) {
                 return 'border-2 border-green-500 rounded-full';
               }
               return null;
             }}
+            navigationLabel={({ date }) => date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            nextLabel={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>}
+            prevLabel={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>}
+            next2Label={null}
+            prev2Label={null}
           />
         </div>
       </div>

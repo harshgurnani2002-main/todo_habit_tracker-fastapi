@@ -18,6 +18,11 @@ export interface ProductivityStats {
   habits_completed: number;
 }
 
+export interface HabitHeatmapData {
+  date: string;
+  completed_count: number;
+}
+
 export interface CategoryDistribution {
   [key: string]: number;
 }
@@ -32,4 +37,5 @@ export interface DashboardStats {
   productivity_trend: ProductivityStats[];
   category_distribution: CategoryDistribution;
   priority_distribution: PriorityDistribution;
+  habit_heatmap: HabitHeatmapData[];
 }

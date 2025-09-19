@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDashboardStats } from '../hooks/useData';
 import { useUser } from '../context/UserContext';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Calendar from 'react-calendar';
+import '../components/Calendar.css';
 
 const Dashboard = () => {
   const { user } = useUser();
@@ -10,14 +11,26 @@ const Dashboard = () => {
   // Format stats with fallback values
   const todoStats = stats?.todo_stats || { total: 0, completed: 0, pending: 0, completion_rate: 0 };
   const habitStats = stats?.habit_stats || { total: 0, active: 0, completion_rate: 0, average_streak: 0 };
-  const productivityTrend = stats?.productivity_trend || [];
+  const habitHeatmap = stats?.habit_heatmap || [];
 
-  // Format the productivity trend data for the chart
-  const chartData = productivityTrend.map((item) => ({
-    date: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
-    todos: item.todos_completed,
-    habits: item.habits_completed
-  }));
+  const getTileClassName = ({ date, view }: { date: Date; view: string }) => {
+    if (view === 'month') {
+      const formattedDate = date.toISOString().split('T')[0];
+      const heatmapData = habitHeatmap.find((item: any) => item.date === formattedDate);
+      if (heatmapData) {
+        if (heatmapData.completed_count > 0 && heatmapData.completed_count <= 2) {
+          return 'react-calendar__tile--heatmap-1';
+        } else if (heatmapData.completed_count > 2 && heatmapData.completed_count <= 4) {
+          return 'react-calendar__tile--heatmap-2';
+        } else if (heatmapData.completed_count > 4 && heatmapData.completed_count <= 6) {
+          return 'react-calendar__tile--heatmap-3';
+        } else if (heatmapData.completed_count > 6) {
+          return 'react-calendar__tile--heatmap-4';
+        }
+      }
+    }
+    return 'react-calendar__tile--heatmap';
+  };
 
   return (
     <div className="space-y-6">
@@ -59,52 +72,21 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Productivity Overview Chart */}
+      {/* Habit Heatmap */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Productivity Overview (Last 7 Days)</h2>
-        {chartData.length > 0 ? (
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={chartData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="todos" 
-                  stroke="#14B8A6" 
-                  activeDot={{ r: 8 }} 
-                  name="Completed Todos"
-                  strokeWidth={2}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="habits" 
-                  stroke="#8B5CF6" 
-                  name="Completed Habits"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Habit Heatmap (Last 30 Days)</h2>
+        {habitHeatmap.length > 0 ? (
+          <div className="h-auto">
+            <Calendar
+              tileClassName={getTileClassName}
+              className="w-full border-0"
+            />
           </div>
         ) : (
           <div className="h-64 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg">
-            <p className="text-gray-500 dark:text-gray-400">No productivity data available</p>
+            <p className="text-gray-500 dark:text-gray-400">No habit data available for the heatmap</p>
           </div>
         )}
-      </div>
-      
-      {/* Recent Activity */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Recent Activity</h2>
-        <div className="space-y-4">
-          <p className="text-gray-500 dark:text-gray-400 text-center py-8">No recent activity</p>
-        </div>
       </div>
     </div>
   );
