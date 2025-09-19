@@ -52,9 +52,13 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     
+    # Send OTP for email verification
+    from app.utils.email import send_otp_email
+    await send_otp_email(user.email)
+    
     return db_user
 
-from datetime import datetime, timedelta
+
 # Login with email/password
 @router.post("/login", response_model=Token)
 async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
@@ -63,6 +67,22 @@ async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
+        )
+    
+    # Check if user is verified
+    if not user.is_verified:
+        # If not verified, send OTP and inform the user
+        await send_otp_email(user.email)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Please verify your email. OTP sent."
+        )
+    
+    # Check if 2FA is enabled
+    if user.is_2fa_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="OTP code required"
         )
     
     # Create access token
@@ -95,7 +115,7 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
                 full_name=user_info.get("name"),
                 google_id=user_info["id"],
                 profile_picture=user_info.get("picture"),
-                is_verified=user_info.get("verified_email", False)
+                is_verified=True  # Google accounts are already verified
             )
             db.add(user)
             db.commit()
@@ -104,8 +124,8 @@ async def google_callback(code: str, db: Session = Depends(get_db)):
             # Update existing user's Google info
             user.google_id = user_info["id"]
             user.profile_picture = user_info.get("picture")
-            if user_info.get("verified_email"):
-                user.is_verified = True
+            # Google accounts are already verified
+            user.is_verified = True
             db.commit()
         
         # Create access token
@@ -133,6 +153,18 @@ async def send_otp(request: OTPRequest):
         )
     return {"message": "OTP sent successfully"}
 
+# Resend OTP for signup verification
+@router.post("/resend-otp")
+async def resend_otp(request: OTPRequest):
+    # Check if user exists
+    success = await send_otp_email(request.email)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send OTP"
+        )
+    return {"message": "OTP resent successfully"}
+
 # Verify OTP and login
 @router.post("/verify-otp", response_model=Token)
 async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
@@ -154,7 +186,7 @@ async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
         db.refresh(user)
     
     # Update last OTP verified time
-    user.last_otp_verified = datetime.now(datetime.timezone.utc)
+    user.last_otp_verified = datetime.now(tz=timezone.utc)
     db.commit()
     
     # Create access token
@@ -164,6 +196,29 @@ async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
+
+# Verify OTP for signup
+@router.post("/verify-otp-signup")
+async def verify_otp_signup(request: OTPVerify, db: Session = Depends(get_db)):
+    if not verify_otp(request.email, request.otp_code):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid OTP code"
+        )
+    
+    # Mark user as verified
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    user.is_verified = True
+    user.last_otp_verified = datetime.now(tz=timezone.utc)
+    db.commit()
+    
+    return {"message": "Email verified successfully"}
 
 # Forgot password - send reset token
 @router.post("/forgot-password")
@@ -253,7 +308,8 @@ async def google_id_token_login(request: GoogleLoginRequest, db: Session = Depen
         email = idinfo['email']
         name = idinfo.get('name')
         picture = idinfo.get('picture')
-        verified_email = idinfo.get('email_verified', False)
+        # Google accounts are already verified
+        verified_email = True
 
         # Check if user exists
         user = db.query(User).filter(User.email == email).first()
@@ -274,8 +330,8 @@ async def google_id_token_login(request: GoogleLoginRequest, db: Session = Depen
             # Update existing user's Google info
             user.google_id = userid
             user.profile_picture = picture
-            if verified_email:
-                user.is_verified = True
+            # Google accounts are already verified
+            user.is_verified = True
             db.commit()
         
         # Create access token

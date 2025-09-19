@@ -17,6 +17,9 @@ class User(Base):
     is_admin=Column(Boolean,default=False)
     google_id=Column(String,nullable=True)
     profile_picture=Column(String,nullable=True)
+    last_otp_verified=Column(DateTime(timezone=True),nullable=True)
+    is_2fa_enabled=Column(Boolean,default=False)
+    otp_secret=Column(String,nullable=True)
 
     created_at=Column(DateTime(timezone=True),server_default=func.now())
     updated_at=Column(DateTime(timezone=True),onupdate=func.now())

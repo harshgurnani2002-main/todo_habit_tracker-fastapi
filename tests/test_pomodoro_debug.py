@@ -35,7 +35,8 @@ def test_user(db):
     user = User(
         email="test@example.com",
         username="testuser",
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        is_verified=True  # User must be verified to login
     )
     db.add(user)
     db.commit()

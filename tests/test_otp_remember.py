@@ -35,6 +35,7 @@ def test_otp_always_required_when_2fa_enabled(client, db):
         email="test@example.com",
         username="testuser",
         hashed_password=hashed_password,
+        is_verified=True,  # User must be verified to login
         is_2fa_enabled=True,
         otp_secret="TESTSECRET",
         last_otp_verified=datetime.now()  # Recently verified
@@ -59,6 +60,7 @@ def test_otp_required_after_24_hours(client, db):
         email="test2@example.com",
         username="testuser2",
         hashed_password=hashed_password,
+        is_verified=True,  # User must be verified to login
         is_2fa_enabled=True,
         otp_secret="TESTSECRET",
         last_otp_verified=datetime.now() - timedelta(hours=25)  # Verified more than 24 hours ago
@@ -83,6 +85,7 @@ def test_otp_required_when_never_verified(client, db):
         email="test3@example.com",
         username="testuser3",
         hashed_password=hashed_password,
+        is_verified=True,  # User must be verified to login
         is_2fa_enabled=True,
         otp_secret="TESTSECRET"
         # last_otp_verified is None

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { VerifyOTP } from './VerifyOTP';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const Register = () => {
     password: '',
     confirm_password: ''
   });
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
   const { handleRegister, loading, error } = useAuth();
   const navigate = useNavigate();
 
@@ -21,12 +23,22 @@ const Register = () => {
     }
     try {
       await handleRegister(formData.email, formData.username, formData.full_name, formData.password);
-      // After successful registration, redirect to login
-      navigate('/login');
+      // After successful registration, show OTP verification
+      setShowOTPVerification(true);
     } catch (err) {
       // Error is handled by the hook
     }
   };
+
+  if (showOTPVerification) {
+    return (
+      <VerifyOTP 
+        email={formData.email} 
+        onBack={() => setShowOTPVerification(false)} 
+        flow="signup"
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">

@@ -70,7 +70,23 @@ export const authAPI = {
     return response.json();
   },
   
+  resendOTP: async (email: string) => {
+    const response = await apiRequest('/auth/send-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+    return response.json();
+  },
+  
   verifyOTP: async (email: string, otp_code: string) => {
+    const response = await apiRequest('/auth/verify-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp_code }),
+    });
+    return response.json();
+  },
+  
+  verifyOTPSignup: async (email: string, otp_code: string) => {
     const response = await apiRequest('/auth/verify-otp', {
       method: 'POST',
       body: JSON.stringify({ email, otp_code }),

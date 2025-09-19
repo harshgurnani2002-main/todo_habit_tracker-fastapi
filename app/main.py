@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine,Base
 from app.routers import auth_router, todos_router, habits_router, dashboard_router, admin_router, pomodoro_router
@@ -16,12 +17,13 @@ app=FastAPI(
     version="0.0.1"
 )
 
+# Add CORS middleware - this should be before including routers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[settings.app_url],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 app.include_router(auth_router)
@@ -36,7 +38,7 @@ app.include_router(pomodoro_router)
 async def root():
     return {"message": "welcome to Todo Habit Tracker",
             'docs': '/docs',
-            'version': '0.0.1'}
+            'version': '00.1'}
 
 @app.get("/health")
 async def health_check():

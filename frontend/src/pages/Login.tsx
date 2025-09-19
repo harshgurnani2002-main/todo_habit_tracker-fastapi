@@ -8,7 +8,7 @@ const Login = () => {
     email: '',
     password: ''
   });
-  const { handleLogin, sendOTP, loading, error } = useAuth();
+  const { handleLogin, loading, error } = useAuth();
   const { login } = useGoogleAuth(); // Just need the login function
   const navigate = useNavigate();
 
@@ -18,17 +18,14 @@ const Login = () => {
       await handleLogin(formData.email, formData.password);
       navigate('/');
     } catch (err) {
-      // Error is handled by the hook
+      if (err instanceof Error && err.message.includes('Please verify your email. OTP sent.')) {
+        navigate('/verify-otp', { state: { email: formData.email } });
+      } 
+      // else, error is handled by the hook
     }
   };
 
-  const onSendOTP = async () => {
-    try {
-      await sendOTP(formData.email);
-    } catch (err) {
-      // Error is handled by the hook
-    }
-  };
+
 
   const onGoogleLogin = async () => {
     try {
@@ -137,17 +134,7 @@ const Login = () => {
               Sign in with Google
             </button>
           </div>
-          
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={onSendOTP}
-              className="font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400 dark:hover:text-teal-300 text-sm"
-              disabled={loading}
-            >
-              Send OTP Code
-            </button>
-          </div>
+
         </form>
         
         <div className="text-center">

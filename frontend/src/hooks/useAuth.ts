@@ -18,7 +18,11 @@ export const useAuth = () => {
       login({ ...userData, token: data.access_token });
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      if (err instanceof Error && err.message.includes('Please verify your email. OTP sent.')) {
+        // Don't set an error, let the component handle the navigation
+      } else {
+        setError(err instanceof Error ? err.message : 'Login failed');
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -44,15 +48,17 @@ export const useAuth = () => {
     logout();
   };
 
-  const sendOTP = async (email: string) => {
+
+
+  const resendOTP = async (email: string) => {
     setLoading(true);
     setError(null);
     
     try {
-      const data = await authAPI.sendOTP(email);
+      const data = await authAPI.resendOTP(email);
       return data;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send OTP');
+      setError(err instanceof Error ? err.message : 'Failed to resend OTP');
       throw err;
     } finally {
       setLoading(false);
@@ -68,6 +74,21 @@ export const useAuth = () => {
       // Get user details after OTP verification
       const userData = await authAPI.getCurrentUser(data.access_token);
       login({ ...userData, token: data.access_token });
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to verify OTP');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOTPSignup = async (email: string, otp_code: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await authAPI.verifyOTPSignup(email, otp_code);
       return data;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to verify OTP');
@@ -99,8 +120,9 @@ export const useAuth = () => {
     handleLogin,
     handleRegister,
     handleLogout,
-    sendOTP,
+    resendOTP,
     verifyOTP,
+    verifyOTPSignup,
     handleGoogleLogin
   };
 };
