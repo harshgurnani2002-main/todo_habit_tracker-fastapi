@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { useHabits } from '../hooks/useData';
 import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Habits = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [showEntryForm, setShowEntryForm] = useState<{[key: number]: boolean}>({});
-  const [entryData, setEntryData] = useState<{[key: number]: any}>({});
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    description: string;
+    frequency: string;
+    target_count: string | number;
+  }>({
     name: '',
     description: '',
     frequency: 'daily',
-    target_count: 1
+    target_count: ''
   });
   const [filters, setFilters] = useState({
     frequency: '',
     search: ''
   });
-  const { habits, loading, error, createHabit, createHabitEntry } = useHabits(user?.token || null, filters);
+  const { habits, loading, error, createHabit, createHabitEntry, deleteHabit } = useHabits(user?.token || null, filters);
 
   const handleCreateHabit = async () => {
     try {
@@ -28,35 +33,19 @@ const Habits = () => {
         name: '',
         description: '',
         frequency: 'daily',
-        target_count: 1
+        target_count: ''
       });
     } catch (err) {
       // Error handling is done in the hook
     }
   };
 
-  const handleCreateEntry = async (habitId: number) => {
+  const handleCreateEntry = async (habitId: number, entryData: { completed_count: number; notes: string | null }) => {
     try {
-      await createHabitEntry(habitId, entryData[habitId] || { completed_count: 1 });
-      setShowEntryForm(prev => ({ ...prev, [habitId]: false }));
-      setEntryData(prev => ({ ...prev, [habitId]: { completed_count: 1 } }));
+      await createHabitEntry(habitId, entryData);
     } catch (err) {
       // Error handling is done in the hook
     }
-  };
-
-  const getProgressPercentage = (habit: any) => {
-    if (!habit.entries || habit.entries.length === 0) return 0;
-    const today = new Date().toISOString().split('T')[0];
-    const todayEntries = habit.entries.filter((entry: any) => 
-      entry.date.split('T')[0] === today
-    );
-    
-    const completedToday = todayEntries.reduce((sum: number, entry: any) => 
-      sum + (entry.completed_count || 0), 0
-    );
-    
-    return Math.min(100, Math.round((completedToday / habit.target_count) * 100));
   };
 
   return (
@@ -229,8 +218,8 @@ const Habits = () => {
                 <input
                   type="number"
                   min="1"
-                  value={formData.target_count}
-                  onChange={(e) => setFormData({...formData, target_count: parseInt(e.target.value) || 1})}
+                  value={String(formData.target_count)}
+                  onChange={(e) => setFormData({...formData, target_count: e.target.value === '' ? '' : parseInt(e.target.value) || 1})}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:text-white"
                 />
               </div>
@@ -254,71 +243,6 @@ const Habits = () => {
         </div>
       )}
 
-      {/* Entry Form Modal */}
-      {Object.keys(showEntryForm).map(habitId => 
-        showEntryForm[parseInt(habitId)] && (
-          <div key={habitId} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Log Habit Entry</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Completed Count
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={entryData[parseInt(habitId)]?.completed_count || 1}
-                    onChange={(e) => setEntryData(prev => ({
-                      ...prev,
-                      [parseInt(habitId)]: {
-                        ...prev[parseInt(habitId)],
-                        completed_count: parseInt(e.target.value) || 1
-                      }
-                    }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:text-white"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Notes (Optional)
-                  </label>
-                  <textarea
-                    value={entryData[parseInt(habitId)]?.notes || ''}
-                    onChange={(e) => setEntryData(prev => ({
-                      ...prev,
-                      [parseInt(habitId)]: {
-                        ...prev[parseInt(habitId)],
-                        notes: e.target.value
-                      }
-                    }))}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="Add any notes about your progress"
-                    rows={3}
-                  />
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-3 mt-6">
-                <button
-                  onClick={() => setShowEntryForm(prev => ({ ...prev, [parseInt(habitId)]: false }))}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => handleCreateEntry(parseInt(habitId))}
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-                >
-                  Log Entry
-                </button>
-              </div>
-            </div>
-          </div>
-        )
-      )}
 
       {/* Loading and Error States */}
       {loading && (
@@ -334,78 +258,71 @@ const Habits = () => {
       )}
 
       {/* Habit List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {habits.length === 0 && !loading ? (
-          <div className="text-center py-12">
+          <div className="col-span-full text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">No habits found. Create your first habit!</p>
           </div>
         ) : (
-          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-            {habits.map((habit) => (
-              <li key={habit.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">{habit.name}</h3>
+          habits.map((habit) => {
+            const today = new Date().toISOString().split('T')[0];
+            const todayEntries = habit.entries?.filter((entry: any) => 
+              entry.date.split('T')[0] === today
+            ) || [];
+            const completedToday = todayEntries.reduce((sum: number, entry: any) => 
+              sum + (entry.completed_count || 0), 0
+            );
+            const progressPercentage = Math.min(100, Math.round((completedToday / habit.target_count) * 100));
+            const isCompletedForToday = completedToday >= habit.target_count;
+
+            return (
+              <div 
+                key={habit.id} 
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
+                onClick={() => navigate(`/habits/${habit.id}`, { state: { habit } })}
+              >
+                <div className="relative h-32">
+                  <div 
+                    className="absolute inset-0 bg-teal-500 transition-all duration-300"
+                    style={{ width: `${progressPercentage}%` }}
+                  ></div>
+                  <div className="absolute inset-0 p-5 flex flex-col justify-between">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">{habit.name}</h3>
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCreateEntry(habit.id, { completed_count: 1, notes: null });
+                          }}
+                          className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${isCompletedForToday ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 hover:bg-teal-200 dark:hover:bg-teal-800'}`}
+                          disabled={isCompletedForToday}
+                        >
+                          {isCompletedForToday ? 'Completed' : 'Complete'}
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); deleteHabit(habit.id); }}
+                          className="p-2 text-red-400 hover:text-red-600 focus:outline-none rounded-full hover:bg-red-100 dark:hover:bg-red-800"
+                        >
+                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                     {habit.description && (
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {habit.description}
                       </p>
                     )}
-                    <div className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <span className="mr-3">
-                        Frequency: <span className="font-medium">{habit.frequency}</span>
-                      </span>
-                      <span>
-                        Target: <span className="font-medium">{habit.target_count} per {habit.frequency}</span>
-                      </span>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Progress: {completedToday}/{habit.target_count} ({progressPercentage}%)
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4">
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Streak</p>
-                      <p className="text-xl font-bold text-teal-600 dark:text-teal-400">{habit.streak_count || 0}</p>
-                    </div>
-                    
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Best</p>
-                      <p className="text-xl font-bold text-teal-600 dark:text-teal-400">{habit.best_streak || 0}</p>
-                    </div>
-                    
-                    <button 
-                      onClick={() => {
-                        setShowEntryForm(prev => ({ ...prev, [habit.id]: true }));
-                        setEntryData(prev => ({ 
-                          ...prev, 
-                          [habit.id]: { completed_count: 1 } 
-                        }));
-                      }}
-                      className="px-3 py-1 bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 rounded-md text-sm font-medium hover:bg-teal-200 dark:hover:bg-teal-800 transition-colors"
-                    >
-                      Log Entry
-                    </button>
                   </div>
                 </div>
-                
-                {/* Progress bar */}
-                <div className="mt-3">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-teal-600 h-2 rounded-full" 
-                      style={{ width: `${getProgressPercentage(habit)}%` }}
-                    ></div>
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    <span>
-                      {habit.entries?.reduce((sum: number, entry: any) => 
-                        sum + (entry.completed_count || 0), 0) || 0}/{habit.target_count} completed
-                    </span>
-                    <span>{getProgressPercentage(habit)}%</span>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+              </div>
+            );
+          })
         )}
       </div>
     </div>

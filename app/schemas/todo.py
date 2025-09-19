@@ -22,7 +22,7 @@ class TodoUpdate(BaseModel):
 
 
 class Todo(TodoBase):
-    _id:int
+    id:int
     is_completed:bool
     created_at:datetime
     updated_at:Optional[datetime]=None

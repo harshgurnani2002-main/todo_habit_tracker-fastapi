@@ -15,7 +15,6 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     full_name:Optional[str]=None 
     username:Optional[str]=None
-    is_2fa_enabled:Optional[bool]=None
 
 
 class User(UserBase):
@@ -24,7 +23,6 @@ class User(UserBase):
     is_verified:bool
     is_admin:bool
     profile_picture:Optional[str]=None
-    last_otp_verified:Optional[datetime]=None
     created_at:datetime
 
     class Config:
@@ -33,7 +31,6 @@ class User(UserBase):
 
 class UserInDB(User):
     hashed_password:str
-    otp_secret:Optional[str]=None
 
 
 class Token(BaseModel):
@@ -48,7 +45,6 @@ class TokenData(BaseModel):
 class LoginRequest(BaseModel):
     email:EmailStr
     password:str
-    otp_code:Optional[str]=None
 
 
 class OTPRequest(BaseModel):

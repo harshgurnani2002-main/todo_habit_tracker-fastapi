@@ -42,28 +42,3 @@ def verify_token(token: str):
         return email
     except JWTError:
         return None
-
-def generate_otp_secret():
-    return pyotp.random_base32()
-
-def generate_qr_code(email: str, secret: str):
-    totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
-        name=email,
-        issuer_name=settings.app_name
-    )
-    
-    qr = qrcode.QRCode(version=1, box_size=10, border=5)
-    qr.add_data(totp_uri)
-    qr.make(fit=True)
-    
-    qr_image = qr.make_image(fill_color="black", back_color="white")
-    buffer = BytesIO()
-    qr_image.save(buffer, format="PNG")
-    buffer.seek(0)
-    
-    qr_code_base64 = base64.b64encode(buffer.getvalue()).decode()
-    return f"data:image/png;base64,{qr_code_base64}"
-
-def verify_otp_code(secret: str, otp_code: str) -> bool:
-    totp = pyotp.TOTP(secret)
-    return totp.verify(otp_code, valid_window=1)

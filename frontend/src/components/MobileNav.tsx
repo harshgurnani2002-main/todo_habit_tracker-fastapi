@@ -42,6 +42,15 @@ const MobileNav = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       )
+    },
+    {
+      name: 'More',
+      path: '',
+      icon: (
+        <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+        </svg>
+      )
     }
   ];
 
@@ -54,90 +63,82 @@ const MobileNav = () => {
 
   return (
     <nav className="md:hidden fixed bottom-0 w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50">
-      <div className="flex justify-around items-center h-16">
+      <div className="flex justify-between items-center h-16">
         {navItems.map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={`flex flex-col items-center justify-center h-full w-full px-1 py-1 ${
-              isActive(item.path)
-                ? 'text-teal-600 dark:text-teal-400'
-                : 'text-gray-700 dark:text-gray-300'
-            }`}
-          >
-            <span className="flex-shrink-0">{item.icon}</span>
-            <span className="text-[10px] mt-1">{item.name}</span>
-          </button>
+          <div key={item.name} className="relative flex-1">
+            <button
+              onClick={() => {
+                if (item.name === 'More') {
+                  setShowMenu(!showMenu);
+                } else {
+                  navigate(item.path);
+                }
+              }}
+              className={`flex flex-col items-center justify-center h-full w-full px-1 py-1 ${
+                isActive(item.path)
+                  ? 'text-teal-600 dark:text-teal-400'
+                  : 'text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              <span className="flex-shrink-0">{item.icon}</span>
+              <span className="text-[10px] mt-1">{item.name}</span>
+            </button>
+            {item.name === 'More' && showMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-10" 
+                  onClick={() => setShowMenu(false)}
+                ></div>
+                <div className="absolute bottom-full right-0 mb-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-20 border border-gray-200 dark:border-gray-700">
+                  <button
+                    onClick={() => {
+                      navigate('/profile');
+                      setShowMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <div className="flex items-center">
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Profile
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      const event = new CustomEvent('toggleDarkMode');
+                      window.dispatchEvent(event);
+                      setShowMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <div className="flex items-center">
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                      </svg>
+                      Toggle Theme
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      const event = new CustomEvent('logout');
+                      window.dispatchEvent(event);
+                      setShowMenu(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <div className="flex items-center">
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Logout
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         ))}
-        
-        {/* More Options Button */}
-        <div className="relative">
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="flex flex-col items-center justify-center h-full w-full px-1 py-1 text-gray-700 dark:text-gray-300"
-          >
-            <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-            </svg>
-            <span className="text-[10px] mt-1">More</span>
-          </button>
-          
-          {/* Dropdown Menu */}
-          {showMenu && (
-            <>
-              <div 
-                className="fixed inset-0 z-10" 
-                onClick={() => setShowMenu(false)}
-              ></div>
-              <div className="absolute bottom-full right-0 mb-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-20 border border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={() => {
-                    navigate('/profile');
-                    setShowMenu(false);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <div className="flex items-center">
-                    <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Profile
-                  </div>
-                </button>
-                <button
-                  onClick={() => {
-                    const event = new CustomEvent('toggleDarkMode');
-                    window.dispatchEvent(event);
-                    setShowMenu(false);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <div className="flex items-center">
-                    <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
-                    Toggle Theme
-                  </div>
-                </button>
-                <button
-                  onClick={() => {
-                    const event = new CustomEvent('logout');
-                    window.dispatchEvent(event);
-                    setShowMenu(false);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <div className="flex items-center">
-                    <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    Logout
-                  </div>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
       </div>
     </nav>
   );

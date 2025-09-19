@@ -81,7 +81,7 @@ async def get_todos(
         query = query.order_by(getattr(Todo, sort_by).asc())
     
     todos = query.offset(skip).limit(limit).all()
-    return todos
+    return [TodoSchema.from_orm(todo) for todo in todos]
 
 @router.get("/{todo_id}",response_model=TodoSchema)
 async def get_todo(todo_id:int,db:Session=Depends(get_db),current_user:User=Depends(get_current_active_user)):

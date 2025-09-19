@@ -222,19 +222,7 @@ async def create_habit_entry(
     # Pick date (use provided or fallback to today)
     entry_date = entry.date or dt_date.today()
 
-    # Check if entry for that date already exists
-    existing_entry = db.query(HabitEntry).filter(
-        HabitEntry.habit_id == habit_id,
-        func.date(HabitEntry.date) == entry_date
-    ).first()
-    
-    if existing_entry:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Entry for {entry_date} already exists"
-        )
-    
-    # Create entry
+    # Create entry (allow unlimited entries per day)
     db_entry = HabitEntry(
         completed_count=entry.completed_count,
         notes=entry.notes,

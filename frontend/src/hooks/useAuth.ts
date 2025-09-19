@@ -7,13 +7,12 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (email: string, password: string, otp_code: string) => {
+  const handleLogin = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
     
     try {
-      // Always use OTP code for login
-      const data = await authAPI.login(email, password, otp_code);
+      const data = await authAPI.login(email, password);
       // Get user details after login
       const userData = await authAPI.getCurrentUser(data.access_token);
       login({ ...userData, token: data.access_token });

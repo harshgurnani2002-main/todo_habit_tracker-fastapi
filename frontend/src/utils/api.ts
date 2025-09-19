@@ -39,10 +39,10 @@ export const apiRequest = async (
 
 // Authentication API functions
 export const authAPI = {
-  login: async (email: string, password: string, otp_code?: string) => {
+  login: async (email: string, password: string) => {
     const response = await apiRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password, otp_code }),
+      body: JSON.stringify({ email, password }),
     });
     return response.json();
   },
@@ -118,7 +118,7 @@ export const todosAPI = {
       },
       body: JSON.stringify(data),
     });
-    const result = response.json();
+    const result = await response.json();
     console.log('API response - updateTodo:', result);
     return result;
   },

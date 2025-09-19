@@ -1,0 +1,77 @@
+
+:root {
+  --calendar-text-color: #333;
+  --calendar-bg-color: transparent;
+  --calendar-hover-bg: #e6e6e6;
+  --calendar-active-border: #38b2ac;
+  --calendar-now-bg: #4fd1c5;
+}
+
+[data-theme='dark'] {
+  --calendar-text-color: #fff;
+  --calendar-bg-color: transparent;
+  --calendar-hover-bg: #4a5568;
+  --calendar-active-border: #38b2ac;
+  --calendar-now-bg: #4fd1c5;
+}
+
+.react-calendar-minimal {
+  width: 100%;
+  background: var(--calendar-bg-color);
+  border: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.react-calendar-minimal .react-calendar__navigation button {
+  color: var(--calendar-text-color);
+  min-width: 44px;
+  background: none;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.react-calendar-minimal .react-calendar__navigation button:enabled:hover,
+.react-calendar-minimal .react-calendar__navigation button:enabled:focus {
+  background-color: var(--calendar-hover-bg);
+}
+
+.react-calendar-minimal .react-calendar__month-view__weekdays {
+  text-align: center;
+  font-weight: bold;
+  color: var(--calendar-text-color);
+}
+
+.react-calendar-minimal .react-calendar__month-view__days__day--weekend {
+  color: var(--calendar-text-color);
+}
+
+.react-calendar-minimal .react-calendar__month-view__days__day--neighboringMonth {
+  color: var(--calendar-text-color);
+}
+
+.react-calendar-minimal .react-calendar__tile {
+  max-width: 100%;
+  text-align: center;
+  padding: 0.75em 0.5em;
+  background: none;
+  border-radius: 50%;
+  color: var(--calendar-text-color);
+}
+
+.react-calendar-minimal .react-calendar__tile:enabled:hover,
+.react-calendar-minimal .react-calendar__tile:enabled:focus {
+  background-color: var(--calendar-hover-bg);
+}
+
+.react-calendar-minimal .react-calendar__tile--now {
+  background: var(--calendar-now-bg);
+  border-radius: 50%;
+}
+
+.react-calendar-minimal .react-calendar__tile--active {
+  background: none;
+  border: 2px solid var(--calendar-active-border); /* Hollow circle */
+  border-radius: 50%;
+}

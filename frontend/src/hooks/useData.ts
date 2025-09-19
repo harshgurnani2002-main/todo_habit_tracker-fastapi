@@ -75,7 +75,7 @@ export const useTodos = (token: string | null, filters?: { status?: string; prio
       console.log('Updating todo:', id, todoData);
       const updatedTodo = await todosAPI.updateTodo(token, id, todoData);
       console.log('Todo updated successfully:', updatedTodo);
-      setTodos(prev => prev.map(todo => todo.id === id ? updatedTodo : todo));
+      setTodos(prev => prev.map(todo => todo.id === id ? { ...todo, ...updatedTodo, id: id } : todo));
       return updatedTodo;
     } catch (err) {
       console.error('Error updating todo:', err);
@@ -192,14 +192,14 @@ export const useHabits = (token: string | null, filters?: { frequency?: string; 
     try {
       const newEntry = await habitsAPI.createHabitEntry(token, habitId, entryData);
       // Update the habit with the new entry
-      setHabits(prev => prev.map(habit => {
-        if (habit.id === habitId) {
+      setHabits(prev => prev.map(h => {
+        if (h.id === habitId) {
           return {
-            ...habit,
-            entries: [...(habit.entries || []), newEntry]
+            ...h,
+            entries: [...(h.entries || []), newEntry]
           };
         }
-        return habit;
+        return h;
       }));
       return newEntry;
     } catch (err) {

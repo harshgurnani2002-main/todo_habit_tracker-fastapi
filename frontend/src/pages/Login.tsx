@@ -6,8 +6,7 @@ import { useGoogleAuth } from '../hooks/useGoogleAuth';
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    otp_code: ''
+    password: ''
   });
   const { handleLogin, sendOTP, loading, error } = useAuth();
   const { login } = useGoogleAuth(); // Just need the login function
@@ -16,7 +15,7 @@ const Login = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await handleLogin(formData.email, formData.password, formData.otp_code);
+      await handleLogin(formData.email, formData.password);
       navigate('/');
     } catch (err) {
       // Error is handled by the hook
@@ -87,22 +86,6 @@ const Login = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                disabled={loading}
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="otp_code" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                OTP Code
-              </label>
-              <input
-                id="otp_code"
-                name="otp_code"
-                type="text"
-                value={formData.otp_code}
-                onChange={(e) => setFormData({...formData, otp_code: e.target.value})}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                placeholder="Enter 6-digit code (if required)"
                 disabled={loading}
               />
             </div>

@@ -4,7 +4,8 @@ import { useUser } from '../context/UserContext';
 
 const Pomodoro = () => {
   const { user } = useUser();
-  const { sessions, loading, error, createSession } = usePomodoroSessions(user?.token || null);
+  const { sessions, loading, error, createSession, deleteSession } = usePomodoroSessions(user?.token || null);
+  const [selectedSession, setSelectedSession] = useState<any>(null);
   
   const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
   const [isActive, setIsActive] = useState(false);
@@ -17,6 +18,12 @@ const Pomodoro = () => {
     duration: 25,
     break_duration: 5
   });
+
+  useEffect(() => {
+    if (selectedSession) {
+      setTimeLeft(selectedSession.duration * 60);
+    }
+  }, [selectedSession]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -42,16 +49,22 @@ const Pomodoro = () => {
 
   const resetTimer = () => {
     setIsActive(false);
-    setTimeLeft(mode === 'work' ? formData.duration * 60 : formData.break_duration * 60);
+    if (selectedSession) {
+      setTimeLeft(mode === 'work' ? selectedSession.duration * 60 : selectedSession.break_duration * 60);
+    }
   };
 
   const switchMode = () => {
     if (mode === 'work') {
       setMode('break');
-      setTimeLeft(formData.break_duration * 60);
+      if (selectedSession) {
+        setTimeLeft(selectedSession.break_duration * 60);
+      }
     } else {
       setMode('work');
-      setTimeLeft(formData.duration * 60);
+      if (selectedSession) {
+        setTimeLeft(selectedSession.duration * 60);
+      }
       setSessionsCompleted(sessionsCompleted + 1);
     }
     setIsActive(false);
@@ -65,7 +78,7 @@ const Pomodoro = () => {
 
   const handleCreateSession = async () => {
     try {
-      await createSession(formData);
+      const newSession = await createSession(formData);
       setShowForm(false);
       setFormData({
         title: '',
@@ -73,15 +86,92 @@ const Pomodoro = () => {
         duration: 25,
         break_duration: 5
       });
+      setSelectedSession(newSession);
     } catch (err) {
       // Error handling is done in the hook
     }
   };
 
+  if (selectedSession) {
+    return (
+      <div className="space-y-6">
+        <button onClick={() => setSelectedSession(null)} className="text-teal-600 dark:text-teal-400 hover:underline">
+          &larr; Back to Sessions
+        </button>
+        {/* Timer Display */}
+        <div className="flex flex-col items-center">
+          <div className="mb-6">
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${ 
+              mode === 'work' 
+                ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
+                : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+            }`}>
+              {mode === 'work' ? 'Work Time' : 'Break Time'}
+            </span>
+          </div>
+          
+          <div className="relative w-64 h-64 rounded-full border-8 border-gray-200 dark:border-gray-700 flex items-center justify-center mb-8">
+            <div className="text-5xl font-bold text-gray-800 dark:text-white">
+              {formatTime(timeLeft)}
+            </div>
+            
+            {/* Progress circle */}
+            <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                stroke={mode === 'work' ? '#EF4444' : '#10B981'}
+                strokeWidth="8"
+                fill="transparent"
+                strokeDasharray="283"
+                strokeDashoffset={283 - (283 * (timeLeft / (mode === 'work' ? selectedSession.duration * 60 : selectedSession.break_duration * 60)))}
+                className="transition-all duration-1000 ease-linear"
+              />
+            </svg>
+          </div>
+          
+          <div className="flex space-x-4">
+            <button
+              onClick={toggleTimer}
+              className={`px-6 py-3 rounded-lg font-medium text-white ${ 
+                isActive 
+                  ? 'bg-yellow-500 hover:bg-yellow-600' 
+                  : 'bg-green-500 hover:bg-green-600'
+              }`}
+            >
+              {isActive ? 'Pause' : 'Start'}
+            </button>
+            
+            <button
+              onClick={resetTimer}
+              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium"
+            >
+              Reset
+            </button>
+            
+            <button
+              onClick={switchMode}
+              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium"
+            >
+              Skip
+            </button>
+          </div>
+          
+          <div className="mt-6 text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              Sessions completed: <span className="font-bold text-red-600 dark:text-red-400">{sessionsCompleted}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Pomodoro Timer</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Pomodoro Sessions</h1>
         <button 
           onClick={() => setShowForm(true)}
           className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
@@ -180,98 +270,42 @@ const Pomodoro = () => {
           <p className="text-red-700 dark:text-red-200">Error: {error}</p>
         </div>
       )}
-
-      {/* Timer Display */}
-      <div className="flex flex-col items-center">
-        <div className="mb-6">
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-            mode === 'work' 
-              ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
-              : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-          }`}>
-            {mode === 'work' ? 'Work Time' : 'Break Time'}
-          </span>
-        </div>
-        
-        <div className="relative w-64 h-64 rounded-full border-8 border-gray-200 dark:border-gray-700 flex items-center justify-center mb-8">
-          <div className="text-5xl font-bold text-gray-800 dark:text-white">
-            {formatTime(timeLeft)}
-          </div>
-          
-          {/* Progress circle */}
-          <svg className="absolute inset-0 w-full h-full transform -rotate-90">
-            <circle
-              cx="50%"
-              cy="50%"
-              r="45%"
-              stroke={mode === 'work' ? '#EF4444' : '#10B981'}
-              strokeWidth="8"
-              fill="transparent"
-              strokeDasharray="283"
-              strokeDashoffset={283 - (283 * (timeLeft / (mode === 'work' ? formData.duration * 60 : formData.break_duration * 60)))}
-              className="transition-all duration-1000 ease-linear"
-            />
-          </svg>
-        </div>
-        
-        <div className="flex space-x-4">
-          <button
-            onClick={toggleTimer}
-            className={`px-6 py-3 rounded-lg font-medium text-white ${
-              isActive 
-                ? 'bg-yellow-500 hover:bg-yellow-600' 
-                : 'bg-green-500 hover:bg-green-600'
-            }`}
-          >
-            {isActive ? 'Pause' : 'Start'}
-          </button>
-          
-          <button
-            onClick={resetTimer}
-            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium"
-          >
-            Reset
-          </button>
-          
-          <button
-            onClick={switchMode}
-            className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium"
-          >
-            Skip
-          </button>
-        </div>
-        
-        <div className="mt-6 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
-            Sessions completed: <span className="font-bold text-red-600 dark:text-red-400">{sessionsCompleted}</span>
-          </p>
-        </div>
-      </div>
-
-      {/* Recent Sessions */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Recent Sessions</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sessions.length === 0 && !loading ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            No sessions completed yet
+          <div className="col-span-full text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400">No sessions found. Create your first session!</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sessions.map((session) => (
-              <div key={session.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 dark:text-white">{session.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{session.description}</p>
-                <div className="mt-3 flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Work: {session.duration} min
-                  </span>
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Break: {session.break_duration} min
-                  </span>
+          sessions.map((session) => (
+            <div 
+              key={session.id} 
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1 cursor-pointer"
+              onClick={() => setSelectedSession(session)}
+            >
+              <div className="p-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">{session.title}</h3>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteSession(session.id); }}
+                    className="p-2 text-red-400 hover:text-red-600 focus:outline-none rounded-full hover:bg-red-100 dark:hover:bg-red-800"
+                  >
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+                {session.description && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    {session.description}
+                  </p>
+                )}
+                <div className="mt-4 flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <span>Work: {session.duration} min</span>
+                  <span>Break: {session.break_duration} min</span>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
       </div>
     </div>

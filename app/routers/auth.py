@@ -13,8 +13,7 @@ class GoogleLoginRequest(BaseModel):
     id_token: str
 from app.schemas.forgot_password import ForgotPasswordRequest, ResetPasswordRequest
 from app.utils.security import (
-    verify_password, get_password_hash, create_access_token, 
-    generate_otp_secret, generate_qr_code, verify_otp_code
+    verify_password, get_password_hash, create_access_token
 )
 from app.utils.email import send_otp_email, verify_otp
 from app.auth.google_oauth import google_oauth
@@ -65,22 +64,6 @@ async def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
         )
-    
-    # Check if 2FA is enabled
-    if user.is_2fa_enabled:
-        if not login_data.otp_code:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="OTP code required"
-            )
-        if not verify_otp_code(user.otp_secret, login_data.otp_code):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid OTP code"
-            )
-        # # Update last OTP verified time
-        # user.last_otp_verified = datetime.now(datetime.astimezone(timezone.utc))
-        # db.commit()
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
@@ -181,55 +164,6 @@ async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
     )
     
     return {"access_token": access_token, "token_type": "bearer"}
-
-# Enable 2FA
-@router.post("/enable-2fa")
-async def enable_2fa(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    if current_user.is_2fa_enabled:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="2FA already enabled"
-        )
-    
-    # Generate secret and QR code
-    secret = generate_otp_secret()
-    qr_code = generate_qr_code(current_user.email, secret)
-    
-    # Save secret (temporarily, until user verifies)
-    current_user.otp_secret = secret
-    db.commit()
-    
-    return {
-        "secret": secret,
-        "qr_code": qr_code,
-        "message": "Scan the QR code with your authenticator app and verify with an OTP"
-    }
-
-# Verify 2FA setup
-@router.post("/verify-2fa")
-async def verify_2fa_setup(
-    otp_code: str,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    if not current_user.otp_secret:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="2FA setup not initiated"
-        )
-    
-    if not verify_otp_code(current_user.otp_secret, otp_code):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid OTP code"
-        )
-    
-    # Enable 2FA and update last OTP verified time
-    current_user.is_2fa_enabled = True
-    current_user.last_otp_verified = datetime.now(datetime.timezone.utc)
-    db.commit()
-    
-    return {"message": "2FA enabled successfully"}
 
 # Forgot password - send reset token
 @router.post("/forgot-password")

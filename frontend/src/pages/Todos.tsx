@@ -19,7 +19,7 @@ const Todos = () => {
     search: '',
     category: ''
   });
-  const { todos, categories, loading, error, createTodo, updateTodo } = useTodos(user?.token || null, filters);
+  const { todos, categories, loading, error, createTodo, updateTodo, deleteTodo } = useTodos(user?.token || null, filters);
 
   const handleCreateTodo = async () => {
     try {
@@ -331,56 +331,68 @@ const Todos = () => {
       )}
 
       {/* Todo List */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {todos.length === 0 && !loading ? (
-          <div className="text-center py-12">
+          <div className="col-span-full text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">No todos found. Create your first todo!</p>
           </div>
         ) : (
-          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-            {todos.map((todo) => (
-              <li key={todo.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
-                <div className="flex items-center">
-                                <input
-                type="checkbox"
-                checked={todo.is_completed}
-                onChange={() => toggleTodoCompletion(todo)}
-                className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
-              />
-                  <div className="ml-3 flex-1">
-                    <div className="flex items-center justify-between">
-                      <p className={`text-sm font-medium ${todo.is_completed ? 'line-through text-gray-500' : 'text-gray-900 dark:text-white'}`}>
+          todos.map((todo) => (
+            todo && todo.id && (
+              <div key={todo.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:-translate-y-1">
+                <div className="p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={todo.is_completed}
+                        onChange={() => toggleTodoCompletion(todo)}
+                        className={`h-5 w-5 ${todo.is_completed ? 'text-green-500' : 'text-gray-400'} focus:ring-green-400 border-gray-300 rounded`}
+                      />
+                      <p className={`ml-3 text-lg font-medium ${todo.is_completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white'}`}>
                         {todo.title}
                       </p>
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${todo.priority === 'high' ? 'bg-red-100 text-red-800' : 
-                          todo.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-green-100 text-green-800'}`}>
-                        {todo.priority}
-                      </span>
                     </div>
-                    {todo.description && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {todo.description}
-                      </p>
-                    )}
-                    <div className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      {todo.category && (
-                        <span className="mr-2 px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
-                          {todo.category}
-                        </span>
-                      )}
-                      {todo.due_date && (
-                        <span>
-                          Due: {new Date(todo.due_date).toLocaleDateString()}
-                        </span>
-                      )}
+                    <div className="flex items-center space-x-3">
+                      {todo.priority === 'high' && <span className="text-red-500 font-bold">!!!</span>}
+                      {todo.priority === 'medium' && <span className="text-yellow-500 font-bold">!!</span>}
+                      {todo.priority === 'low' && <span className="text-blue-500 font-bold">!</span>}
+                      <button
+                        onClick={() => deleteTodo(todo.id)}
+                        className="p-2 text-red-400 hover:text-red-600 focus:outline-none rounded-full hover:bg-red-100 dark:hover:bg-red-800"
+                      >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
+
+                  {todo.description && (
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                      {todo.description}
+                    </p>
+                  )}
+
+                  <div className="mt-4 flex items-center justify-between">
+                    {todo.category && (
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-600 dark:text-gray-300 rounded-full">
+                        {todo.category}
+                      </span>
+                    )}
+                    {todo.due_date && (
+                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                        <svg className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>{new Date(todo.due_date).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </li>
-            ))}
-          </ul>
+              </div>
+            )
+          ))
         )}
       </div>
     </div>

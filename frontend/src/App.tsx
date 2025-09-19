@@ -18,6 +18,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
+import HabitDetail from './pages/HabitDetail';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -123,6 +124,7 @@ const App = () => {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/todos" element={<ProtectedRoute><Todos /></ProtectedRoute>} />
         <Route path="/habits" element={<ProtectedRoute><Habits /></ProtectedRoute>} />
+        <Route path="/habits/:id" element={<ProtectedRoute><HabitDetail /></ProtectedRoute>} />
         <Route path="/pomodoro" element={<ProtectedRoute><Pomodoro /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
