@@ -94,6 +94,22 @@ export const authAPI = {
     return response.json();
   },
 
+  forgotPassword: async (email: string) => {
+    const response = await apiRequest('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+    return response.json();
+  },
+
+  resetPassword: async (token: string, new_password: string) => {
+    const response = await apiRequest('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, new_password }),
+    });
+    return response.json();
+  },
+
   googleLogin: async (code: string) => {
     const response = await apiRequest(`/auth/google/callback?code=${code}`, {
       method: 'GET',

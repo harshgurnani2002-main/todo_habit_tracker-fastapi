@@ -182,12 +182,14 @@ async def verify_otp_login(request: OTPVerify, db: Session = Depends(get_db)):
             is_verified=True  # Email verified via OTP
         )
         db.add(user)
-        db.commit()
-        db.refresh(user)
-    
+    else:
+        user.is_verified = True
+
     # Update last OTP verified time
     user.last_otp_verified = datetime.now(tz=timezone.utc)
+    
     db.commit()
+    db.refresh(user)
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
@@ -226,8 +228,10 @@ async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(
     # Check if user exists
     user = db.query(User).filter(User.email == request.email).first()
     if not user:
-        # We don't reveal if the email exists for security reasons
-        return {"message": "If the email exists, a reset link has been sent"}
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
     
     # Generate reset token
     reset_token = secrets.token_urlsafe(32)

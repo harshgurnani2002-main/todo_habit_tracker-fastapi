@@ -114,6 +114,36 @@ export const useAuth = () => {
     }
   };
 
+  const forgotPassword = async (email: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await authAPI.forgotPassword(email);
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send reset link');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetPassword = async (token: string, new_password: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const data = await authAPI.resetPassword(token, new_password);
+      return data;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to reset password');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     error,
@@ -123,6 +153,8 @@ export const useAuth = () => {
     resendOTP,
     verifyOTP,
     verifyOTPSignup,
-    handleGoogleLogin
+    handleGoogleLogin,
+    forgotPassword,
+    resetPassword,
   };
 };
