@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePomodoroSessions } from '../hooks/useData';
 import { useUser } from '../context/UserContext';
+import PomodoroLogs from '../components/PomodoroLogs';
 
 const Pomodoro = () => {
   const { user } = useUser();
@@ -99,8 +100,8 @@ const Pomodoro = () => {
           &larr; Back to Sessions
         </button>
         {/* Timer Display */}
-        <div className="flex flex-col items-center">
-          <div className="mb-6">
+        <div className="min-h-screen flex flex-col items-center">
+          <div className="mt-16 mb-6">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${ 
               mode === 'work' 
                 ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
@@ -110,8 +111,8 @@ const Pomodoro = () => {
             </span>
           </div>
           
-          <div className="relative w-64 h-64 rounded-full border-8 border-gray-200 dark:border-gray-700 flex items-center justify-center mb-8">
-            <div className="text-5xl font-bold text-gray-800 dark:text-white">
+          <div className="relative w-80 h-80 md:w-96 md:h-96 rounded-full border-8 border-gray-200 dark:border-gray-700 flex items-center justify-center mb-8">
+            <div className="text-6xl md:text-7xl font-bold text-gray-800 dark:text-white">
               {formatTime(timeLeft)}
             </div>
             
@@ -125,7 +126,7 @@ const Pomodoro = () => {
                 strokeWidth="8"
                 fill="transparent"
                 strokeDasharray="283"
-                strokeDashoffset={283 - (283 * (timeLeft / (mode === 'work' ? selectedSession.duration * 60 : selectedSession.break_duration * 60)))}
+                strokeDashoffset={283 - (283 * (timeLeft / (mode === 'work' ? selectedSession.duration * 60 : selectedSession.break_duration * 60)))} 
                 className="transition-all duration-1000 ease-linear"
               />
             </svg>
@@ -163,6 +164,7 @@ const Pomodoro = () => {
               Sessions completed: <span className="font-bold text-red-600 dark:text-red-400">{sessionsCompleted}</span>
             </p>
           </div>
+          <PomodoroLogs sessions={sessions} />
         </div>
       </div>
     )
@@ -249,7 +251,7 @@ const Pomodoro = () => {
               </button>
               <button
                 onClick={handleCreateSession}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-500"
               >
                 Create Session
               </button>
@@ -308,6 +310,7 @@ const Pomodoro = () => {
           ))
         )}
       </div>
+      <PomodoroLogs sessions={sessions} />
     </div>
   );
 };
